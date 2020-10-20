@@ -1,4 +1,4 @@
-Linux kernel
+Linux kernel 5.6.19 with Intel e1000e driver patched to support XDP
 ============
 
 There are several guides for kernel developers and users. These guides can
@@ -16,3 +16,7 @@ several of them using the Restructured Text markup notation.
 Please read the Documentation/process/changes.rst file, as it contains the
 requirements for building and running the kernel, and information about
 the problems which may result by upgrading your kernel.
+
+============
+How to build:
+make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/net/ethernet/intel/e1000e
