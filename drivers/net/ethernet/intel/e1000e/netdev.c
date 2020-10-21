@@ -1658,7 +1658,7 @@ static void e1000_xdp_xmit_bundle(struct e1000_buffer_bundle *buffer_info,
 
        /* kick hardware to send bundle and return control back to the stack */
        writel(tx_ring->next_to_use, hw->hw_addr + E1000_TDT(0));
-       mmiowb();
+       wmb();
 
        HARD_TX_UNLOCK(netdev, txq);
 }
@@ -7401,14 +7401,14 @@ static bool e1000_xdp_attached(struct net_device *dev)
        return !!priv->prog;
 }
 
-static int e1000_xdp(struct net_device *dev, struct netdev_xdp *xdp)
+static int e1000_xdp(struct net_device *dev, struct netdev_bpf *xdp)
 {
 
        switch (xdp->command) {
        case XDP_SETUP_PROG:
                return e1000_xdp_set(dev, xdp->prog);
        case XDP_QUERY_PROG:
-               xdp->prog_attached = e1000_xdp_attached(dev);
+               xdp->prog_id = e1000_xdp_attached(dev);
                return 0;
        default:
                return -EINVAL;
@@ -7434,7 +7434,7 @@ static const struct net_device_ops e1000e_netdev_ops = {
 	.ndo_poll_controller	= e1000_netpoll,
 #endif
 	.ndo_set_features = e1000_set_features,
-	.ndo_xdp		= e1000_xdp,
+	.ndo_bpf		= e1000_xdp,
 	.ndo_fix_features = e1000_fix_features,
 	.ndo_features_check	= passthru_features_check,
 };
